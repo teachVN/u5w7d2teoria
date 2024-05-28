@@ -3,7 +3,7 @@ package it.epicode.u5w7d2teoria.service;
 import it.epicode.u5w7d2teoria.dto.UserDto;
 import it.epicode.u5w7d2teoria.entity.Role;
 import it.epicode.u5w7d2teoria.entity.User;
-import it.epicode.u5w7d2teoria.exception.UserNotFoundException;
+import it.epicode.u5w7d2teoria.exception.NotFoundException;
 import it.epicode.u5w7d2teoria.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,7 +54,7 @@ public class UserService {
 
         }
         else{
-            throw new UserNotFoundException("User with id=" + id + " not found");
+            throw new NotFoundException("User with id=" + id + " not found");
         }
     }
 
@@ -66,7 +66,7 @@ public class UserService {
             return "User with id=" + id + " correctly deleted";
         }
         else{
-            throw new UserNotFoundException("User with id=" + id + " not found");
+            throw new NotFoundException("User with id=" + id + " not found");
         }
     }
 
@@ -77,7 +77,7 @@ public class UserService {
             return userOptional.get();
         }
         else{
-            throw new UserNotFoundException("User with email=" + email + " not found");
+            throw new NotFoundException("User with email=" + email + " not found");
         }
 
 

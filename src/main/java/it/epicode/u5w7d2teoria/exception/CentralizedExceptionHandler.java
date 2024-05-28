@@ -1,5 +1,6 @@
 package it.epicode.u5w7d2teoria.exception;
 
+import it.epicode.u5w7d2teoria.entity.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class CentralizedExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> userNotFoundHandler(UserNotFoundException e){
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> userNotFoundHandler(NotFoundException e){
         System.out.println("sono UserNotFoundException");
         Error error = new Error();
         error.setMessage(e.getMessage());

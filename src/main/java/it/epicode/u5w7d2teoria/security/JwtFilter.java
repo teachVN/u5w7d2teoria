@@ -1,9 +1,9 @@
 package it.epicode.u5w7d2teoria.security;
 
-import it.epicode.u5w7d1teoria.entity.User;
-import it.epicode.u5w7d1teoria.exception.UnauthorizedException;
-import it.epicode.u5w7d1teoria.exception.UserNotFoundException;
-import it.epicode.u5w7d1teoria.service.UserService;
+import it.epicode.u5w7d2teoria.entity.User;
+import it.epicode.u5w7d2teoria.exception.UnauthorizedException;
+import it.epicode.u5w7d2teoria.exception.NotFoundException;
+import it.epicode.u5w7d2teoria.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override //metodo per verificare che nella richiesta ci sia il token, altrimenti non si è autorizzati
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        System.out.println("sono qui");
+
 
         if(authHeader==null || !authHeader.startsWith("Bearer ")){
             throw  new UnauthorizedException("Error in authorization, token missing!");
@@ -37,21 +37,20 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         jwtTool.verifyToken(token);
-
-        int userId = Integer.parseInt(jwtTool.getUserIdFromToken(token));
+        //aggiunta di questa sezione per recuperare lo user che ha l'id che si trova nel token. Serve
+        //per creare un oggetto di tipo authentication che contiene i ruoli dell'utente e inserirli nel contesto della sicurezza
+        int userId = jwtTool.getIdFromToken(token);
 
         Optional<User> userOptional = userService.getUserById(userId);
 
         if(userOptional.isPresent()){
             User user = userOptional.get();
-            System.out.println(user);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            System.out.println(authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         else{
-            throw new UserNotFoundException("User with id=" + userId + " not found");
+            throw new NotFoundException("User with id=" + userId + " not found");
         }
 
         filterChain.doFilter(request, response);
@@ -59,7 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override //permette di non effettuare l'autenticazione per usare i servizi di autenticazione
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        System.out.println("should");
+
         return new AntPathMatcher().match("/auth/**", request.getServletPath());
     }
 }

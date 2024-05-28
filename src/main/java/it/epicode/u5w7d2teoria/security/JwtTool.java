@@ -34,9 +34,9 @@ public class JwtTool {
         }
     }
 
-    public String getUserIdFromToken(String token){
-        return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).
-                build().parseSignedClaims(token).getPayload().getSubject();
+    public int getIdFromToken(String token){
+        return Integer.parseInt(Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).
+                build().parseSignedClaims(token).getPayload().getSubject());
     }
 
 }
